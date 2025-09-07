@@ -1,0 +1,94 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: kamf-project
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: kamf-project
+    app.kubernetes.io/part-of: kamf
+spec:
+  description: KAMF Application Project for GitOps deployment
+  
+  # 소스 레포지토리 제한
+  sourceRepos:
+  - https://github.com/pbc1017/KAMF-k8s.git
+  - https://github.com/pbc1017/KAMF-k8s  # SSH 버전도 허용
+  
+  # 배포 대상 클러스터 및 네임스페이스 제한
+  destinations:
+  - namespace: kamf-dev
+    server: https://kubernetes.default.svc
+  - namespace: kamf-prod
+    server: https://kubernetes.default.svc
+  - namespace: argocd  # Root app을 위한 argocd 네임스페이스
+    server: https://kubernetes.default.svc
+  
+  # 클러스터 리소스 권한 설정
+  clusterResourceWhitelist:
+  - group: ""
+    kind: Namespace
+  - group: apiextensions.k8s.io
+    kind: CustomResourceDefinition
+  - group: rbac.authorization.k8s.io
+    kind: ClusterRole
+  - group: rbac.authorization.k8s.io
+    kind: ClusterRoleBinding
+  
+  # 네임스페이스 리소스 권한 설정
+  namespaceResourceWhitelist:
+  - group: ""
+    kind: "*"  # 모든 코어 리소스
+  - group: apps
+    kind: "*"  # Deployment, StatefulSet 등
+  - group: networking.k8s.io
+    kind: "*"  # Ingress, NetworkPolicy 등
+  - group: traefik.containo.us
+    kind: "*"  # Traefik IngressRoute, Middleware 등
+  - group: argoproj.io
+    kind: "*"  # ArgoCD Applications
+  
+  # RBAC 설정
+  roles:
+  # 개발자 역할
+  - name: developer
+    description: Developers can view and sync dev environment
+    policies:
+    - p, proj:kamf-project:developer, applications, get, kamf-project/kamf-dev, allow
+    - p, proj:kamf-project:developer, applications, sync, kamf-project/kamf-dev, allow
+    - p, proj:kamf-project:developer, applications, action/*, kamf-project/kamf-dev, allow
+    - p, proj:kamf-project:developer, repositories, get, *, allow
+    - p, proj:kamf-project:developer, logs, get, kamf-project/kamf-dev, allow
+    groups:
+    - kamf-developers
+    
+  # 운영자 역할
+  - name: operator
+    description: Operators can manage both dev and prod environments
+    policies:
+    - p, proj:kamf-project:operator, applications, *, kamf-project/*, allow
+    - p, proj:kamf-project:operator, repositories, *, *, allow
+    - p, proj:kamf-project:operator, logs, *, kamf-project/*, allow
+    - p, proj:kamf-project:operator, exec, *, kamf-project/*, allow
+    groups:
+    - kamf-operators
+    - kamf-admins
+  
+  # 읽기 전용 역할
+  - name: readonly
+    description: Read-only access to all applications
+    policies:
+    - p, proj:kamf-project:readonly, applications, get, kamf-project/*, allow
+    - p, proj:kamf-project:readonly, logs, get, kamf-project/*, allow
+    groups:
+    - kamf-viewers
+  
+  # 동기화 정책
+  syncWindows:
+  # 운영환경 점검 시간 제한
+  - kind: deny
+    schedule: "0 2-4 * * *"  # 매일 새벽 2-4시는 동기화 금지
+    duration: 2h
+    applications:
+    - kamf-prod
+    manualSync: false
+    timeZone: "Asia/Seoul"

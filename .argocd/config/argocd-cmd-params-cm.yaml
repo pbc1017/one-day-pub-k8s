@@ -1,0 +1,30 @@
+# ArgoCD 서버 매개변수 설정
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cmd-params-cm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-cmd-params-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  # 서버 설정
+  server.insecure: "false"
+  server.grpc.web: "true"
+  
+  # 동기화 설정
+  controller.self.heal.timeout.seconds: "30"
+  controller.operation.processors: "10"
+  controller.status.processors: "20"
+  
+  # 리포지토리 설정
+  controller.repo.server.timeout.seconds: "60"
+  
+  # 애플리케이션 설정
+  controller.app.resync: "180"  # 3분마다 Git 레포 확인
+  
+  # 보안 설정
+  server.enable.proxy.extension: "true"
+  
+  # 성능 튜닝
+  controller.kubectl.parallelism.limit: "10"

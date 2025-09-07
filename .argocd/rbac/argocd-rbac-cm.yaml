@@ -1,0 +1,52 @@
+# ArgoCD RBAC ConfigMap
+# 이 파일은 ArgoCD 설치 시 적용되는 글로벌 RBAC 정책입니다
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-rbac-cm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-rbac-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  # RBAC 정책 설정
+  policy.default: role:readonly
+  
+  # 그룹 기반 역할 매핑
+  policy.csv: |
+    # 관리자 그룹
+    g, kamf-admins, role:admin
+    g, argocd-admins, role:admin
+    
+    # 개발팀 권한
+    g, kamf-developers, role:kamf-developer
+    g, kamf-operators, role:kamf-operator  
+    g, kamf-viewers, role:readonly
+    
+    # 커스텀 역할 정의
+    p, role:kamf-developer, applications, get, */*, allow
+    p, role:kamf-developer, applications, sync, kamf-project/kamf-dev, allow
+    p, role:kamf-developer, applications, action/*, kamf-project/kamf-dev, allow
+    p, role:kamf-developer, logs, get, kamf-project/kamf-dev, allow
+    p, role:kamf-developer, repositories, get, *, allow
+    
+    p, role:kamf-operator, applications, *, kamf-project/*, allow
+    p, role:kamf-operator, repositories, *, *, allow
+    p, role:kamf-operator, logs, *, kamf-project/*, allow
+    p, role:kamf-operator, exec, *, kamf-project/*, allow
+    
+    # 운영환경 특별 제한
+    p, role:kamf-developer, applications, sync, kamf-project/kamf-prod, deny
+    p, role:kamf-developer, applications, delete, kamf-project/kamf-prod, deny
+  
+  # OIDC/SSO 설정 (향후 확장용)
+  # oidc.config: |
+  #   name: KAMF SSO
+  #   issuer: https://your-oidc-provider.com
+  #   clientId: kamf-argocd
+  #   requestedScopes: ["openid", "profile", "email", "groups"]
+  #   requestedIDTokenClaims: {"groups": {"essential": true}}
+  
+  # 관리자 사용자 정의
+  users.admin.enabled: "true"
+  accounts.admin: apiKey, login

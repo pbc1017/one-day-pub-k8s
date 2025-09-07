@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kamf-dev
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: kamf-dev
+    app.kubernetes.io/part-of: kamf
+    environment: development
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: kamf-project
+  
+  source:
+    repoURL: https://github.com/pbc1017/KAMF-k8s.git
+    targetRevision: HEAD
+    path: environments/dev
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kamf-dev
+  
+  syncPolicy:
+    # 초기 설정: 수동 동기화 (안전성 확보)
+    automated: null
+    syncOptions:
+    - CreateNamespace=true
+    - PrunePropagationPolicy=foreground
+    - PruneLast=true
+    - RespectIgnoreDifferences=true
+    - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  
+  revisionHistoryLimit: 10
+  
+  # 리소스 상태 모니터링
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
+  - group: ""
+    kind: Service
+    jsonPointers:
+    - /spec/clusterIP

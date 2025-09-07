@@ -1,0 +1,48 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kamf-root
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: kamf-root
+    app.kubernetes.io/part-of: kamf
+    component: root-application
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: kamf-project
+  
+  source:
+    repoURL: https://github.com/pbc1017/KAMF-k8s.git
+    targetRevision: HEAD
+    path: .argocd
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  
+  syncPolicy:
+    # Root App도 초기에는 수동 동기화
+    automated: null
+    syncOptions:
+    - CreateNamespace=false  # argocd 네임스페이스는 이미 존재
+    - PrunePropagationPolicy=foreground
+    - PruneLast=true
+    - RespectIgnoreDifferences=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  
+  revisionHistoryLimit: 15
+  
+  # Application CRD 관련 설정
+  ignoreDifferences:
+  - group: argoproj.io
+    kind: Application
+    jsonPointers:
+    - /spec/source/targetRevision
+    - /operation
+    - /status

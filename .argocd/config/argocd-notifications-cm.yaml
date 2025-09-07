@@ -1,0 +1,142 @@
+# ArgoCD 알림 설정
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-notifications-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  # 알림 서비스 설정 (향후 Slack 연동 시 사용)
+  service.slack: |
+    token: $slack-token  # Secret에서 참조
+    username: ArgoCD
+    icon: :argo:
+  
+  # 이메일 알림 설정 (옵션)
+  service.email.gmail: |
+    username: $email-username
+    password: $email-password
+    host: smtp.gmail.com
+    port: 465
+    from: $email-username
+  
+  # 알림 템플릿
+  template.app-deployed: |
+    email:
+      subject: KAMF Application deployed
+    message: |
+      Application {{.app.metadata.name}} has been deployed to {{.app.spec.destination.namespace}}.
+      Operation details:
+      - Sync Status: {{.app.status.sync.status}}
+      - Health Status: {{.app.status.health.status}}
+      - Repository: {{.app.spec.source.repoURL}}
+      - Revision: {{.app.status.sync.revision}}
+    slack:
+      attachments: |
+        [{
+          "title": "{{ .app.metadata.name}}",
+          "title_link":"{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+          "color": "#18be52",
+          "fields": [
+          {
+            "title": "Sync Status",
+            "value": "{{.app.status.sync.status}}",
+            "short": true
+          },
+          {
+            "title": "Health Status", 
+            "value": "{{.app.status.health.status}}",
+            "short": true
+          },
+          {
+            "title": "Repository",
+            "value": "{{.app.spec.source.repoURL}}",
+            "short": true
+          },
+          {
+            "title": "Revision",
+            "value": "{{.app.status.sync.revision}}",
+            "short": true
+          }]
+        }]
+  
+  template.app-health-degraded: |
+    email:
+      subject: KAMF Application health degraded
+    message: |
+      Application {{.app.metadata.name}} health is degraded.
+      Application details:
+      - Health Status: {{.app.status.health.status}}
+      - Repository: {{.app.spec.source.repoURL}}
+      - Destination: {{.app.spec.destination.namespace}}
+    slack:
+      attachments: |
+        [{
+          "title": "{{ .app.metadata.name}}",
+          "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+          "color": "#f4c430",
+          "fields": [
+          {
+            "title": "Health Status",
+            "value": "{{.app.status.health.status}}",
+            "short": true
+          },
+          {
+            "title": "Repository",
+            "value": "{{.app.spec.source.repoURL}}",
+            "short": true
+          }]
+        }]
+  
+  template.app-sync-failed: |
+    email:
+      subject: KAMF Application sync failed
+    message: |
+      Application {{.app.metadata.name}} sync failed.
+      Sync operation details:
+      - Sync Status: {{.app.status.sync.status}}
+      - Repository: {{.app.spec.source.repoURL}}
+      - Revision: {{.app.operation.sync.revision}}
+    slack:
+      attachments: |
+        [{
+          "title": "{{ .app.metadata.name}}",
+          "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+          "color": "#E96D76",
+          "fields": [
+          {
+            "title": "Sync Status",
+            "value": "{{.app.status.sync.status}}",
+            "short": true
+          },
+          {
+            "title": "Repository",
+            "value": "{{.app.spec.source.repoURL}}",
+            "short": true
+          },
+          {
+            "title": "Revision",
+            "value": "{{.app.operation.sync.revision}}",
+            "short": true
+          }]
+        }]
+  
+  # 구독 설정
+  subscriptions: |
+    # 운영환경 배포 알림
+    - recipients:
+      - slack:kamf-deploy
+      triggers:
+      - on-deployed
+      - on-health-degraded  
+      - on-sync-failed
+      selector: environment=production
+    
+    # 개발환경 배포 알림 (실패 시만)
+    - recipients:
+      - slack:kamf-dev
+      triggers:
+      - on-sync-failed
+      selector: environment=development
