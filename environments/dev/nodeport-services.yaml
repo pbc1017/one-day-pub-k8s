@@ -48,7 +48,7 @@ spec:
   ports:
   - port: 3306
     targetPort: 3306
-    nodePort: 33007
+    nodePort: 33307
     protocol: TCP
     name: mysql
   selector:
