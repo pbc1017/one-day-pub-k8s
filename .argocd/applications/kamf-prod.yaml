@@ -22,8 +22,10 @@ spec:
     namespace: kamf-prod
   
   syncPolicy:
-    # 운영환경: 더욱 신중한 수동 동기화
-    automated: null
+    # GitOps: PR 머지 후 자동 동기화 🚀  
+    automated:
+      prune: true     # 삭제된 리소스 자동 정리
+      selfHeal: false # 운영환경은 수동 변경사항 보존
     syncOptions:
     - CreateNamespace=true
     - PrunePropagationPolicy=foreground

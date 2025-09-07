@@ -22,8 +22,10 @@ spec:
     namespace: kamf-dev
   
   syncPolicy:
-    # 초기 설정: 수동 동기화 (안전성 확보)
-    automated: null
+    # GitOps: 자동 동기화 활성화 🚀
+    automated:
+      prune: true     # 삭제된 리소스 자동 정리
+      selfHeal: true  # 수동 변경사항 자동 복구
     syncOptions:
     - CreateNamespace=true
     - PrunePropagationPolicy=foreground
