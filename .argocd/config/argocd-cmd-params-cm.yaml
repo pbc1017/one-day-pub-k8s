@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/part-of: argocd
 data:
   # 서버 설정
-  server.insecure: "false"
+  server.insecure: "true"
   server.grpc.web: "true"
   
   # 동기화 설정
