@@ -1,0 +1,39 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: kamf-prod
+
+resources:
+- namespace.yaml
+- ../../base/api
+- ../../base/web
+- ../../base/mysql
+- nodeport-services.yaml
+- secrets.yaml
+- ingress-route.yaml
+
+patches:
+- path: api-patch.yaml
+  target:
+    kind: Deployment
+    name: kamf-api
+- path: web-patch.yaml
+  target:
+    kind: Deployment
+    name: kamf-web
+- path: mysql-patch.yaml
+  target:
+    kind: StatefulSet
+    name: mysql
+
+commonLabels:
+  environment: production
+  tier: prod
+
+namePrefix: prod-
+
+images:
+- name: chansparcs/kamf-api
+  newTag: latest
+- name: chansparcs/kamf-web
+  newTag: latest

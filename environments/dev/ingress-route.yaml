@@ -1,0 +1,51 @@
+# Traefik IngressRoute for development environment
+# This will be used after complete migration from nginx
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kamf-dev-web
+  labels:
+    app: kamf-web
+    environment: development
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`dev.kamf.site`)
+    kind: Rule
+    services:
+    - name: dev-kamf-web-service
+      port: 3000
+  tls:
+    certResolver: letsencrypt
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kamf-dev-api
+  labels:
+    app: kamf-api
+    environment: development
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`dev.kamf.site`) && PathPrefix(`/api`)
+    kind: Rule
+    services:
+    - name: dev-kamf-api-service
+      port: 8000
+    middlewares:
+    - name: dev-api-stripprefix
+  tls:
+    certResolver: letsencrypt
+---
+# Middleware to strip /api prefix
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: dev-api-stripprefix
+spec:
+  stripPrefix:
+    prefixes:
+      - /api

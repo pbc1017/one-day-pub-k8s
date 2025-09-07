@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kamf-web
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: web
+        env:
+        - name: NODE_ENV
+          value: "development"
+        - name: NEXT_PUBLIC_API_URL
+          value: "https://dev.kamf.site/api"
+        - name: NEXTAUTH_URL
+          value: "https://dev.kamf.site"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"

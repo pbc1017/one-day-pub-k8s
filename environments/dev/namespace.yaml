@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kamf-dev
+  labels:
+    name: kamf-dev
+    environment: development
+    app.kubernetes.io/part-of: kamf

@@ -1,0 +1,51 @@
+# Traefik IngressRoute for production environment
+# This will be used after complete migration from nginx
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kamf-prod-web
+  labels:
+    app: kamf-web
+    environment: production
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`kamf.site`)
+    kind: Rule
+    services:
+    - name: prod-kamf-web-service
+      port: 3000
+  tls:
+    certResolver: letsencrypt
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kamf-prod-api
+  labels:
+    app: kamf-api
+    environment: production
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`kamf.site`) && PathPrefix(`/api`)
+    kind: Rule
+    services:
+    - name: prod-kamf-api-service
+      port: 8000
+    middlewares:
+    - name: prod-api-stripprefix
+  tls:
+    certResolver: letsencrypt
+---
+# Middleware to strip /api prefix
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: prod-api-stripprefix
+spec:
+  stripPrefix:
+    prefixes:
+      - /api

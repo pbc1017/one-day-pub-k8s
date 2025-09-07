@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  labels:
+    app: mysql
+    component: database
+data:
+  my.cnf: |
+    [mysqld]
+    # Performance tuning for K8s
+    max_connections = 200
+    innodb_buffer_pool_size = 384M
+    innodb_log_file_size = 64M
+    innodb_flush_log_at_trx_commit = 2
+    innodb_flush_method = O_DIRECT
+    
+    # Charset and collation
+    character-set-server = utf8mb4
+    collation-server = utf8mb4_unicode_ci
+    
+    # Binary logging for replication (future use)
+    server-id = 1
+    log-bin = mysql-bin
+    binlog-format = ROW
+    expire_logs_days = 7
+    
+    # Security
+    local-infile = 0
+    
+    # Timezone
+    default-time-zone = '+09:00'
+    
+    [client]
+    default-character-set = utf8mb4

@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kamf-api
+  labels:
+    app: kamf-api
+    component: backend
+spec:
+  replicas: 1  # Will be overridden by environments
+  selector:
+    matchLabels:
+      app: kamf-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: kamf-api
+        component: backend
+    spec:
+      containers:
+      - name: api
+        image: chansparcs/kamf-api:latest  # Will be updated by CI/CD
+        ports:
+        - containerPort: 8000
+          name: http
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: DB_HOST
+          value: "mysql-service"
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: kamf-secrets
+              key: db-username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: kamf-secrets
+              key: db-password
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: kamf-secrets
+              key: jwt-secret
+        - name: REFRESH_TOKEN_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: kamf-secrets
+              key: refresh-token-secret
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "150m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+      restartPolicy: Always

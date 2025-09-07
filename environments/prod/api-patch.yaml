@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kamf-api
+spec:
+  replicas: 2  # High availability
+  template:
+    spec:
+      containers:
+      - name: api
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: DB_HOST
+          value: "mysql-service"
+        - name: DB_PORT
+          value: "3306"
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "150m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
