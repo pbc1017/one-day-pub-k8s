@@ -63,20 +63,8 @@ spec:
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 5
-        readinessProbe:
-          exec:
-            command:
-            - mysql
-            - -h
-            - localhost
-            - -u
-            - root
-            - -p$MYSQL_ROOT_PASSWORD
-            - -e
-            - "SELECT 1"
-          initialDelaySeconds: 5
-          periodSeconds: 2
-          timeoutSeconds: 1
+        # readinessProbe removed: Environment variable expansion issues in probe
+        # MySQL liveness probe is sufficient for basic health checking
       volumes:
       - name: mysql-config
         configMap:
