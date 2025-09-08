@@ -21,6 +21,22 @@ spec:
         app: kamf-api
         component: backend
     spec:
+      dnsPolicy: "None"
+      dnsConfig:
+        nameservers:
+        - "8.8.8.8"
+        - "8.8.4.4"
+        - "10.43.0.10"  # Keep cluster DNS as fallback
+        searches:
+        - "svc.cluster.local"
+        - "cluster.local"
+        options:
+        - name: ndots
+          value: "2"  # Reduced from 5 to 2
+        - name: timeout
+          value: "2"
+        - name: attempts
+          value: "2"
       containers:
       - name: api
         image: chansparcs/kamf-api:latest # Will be updated by CI/CD

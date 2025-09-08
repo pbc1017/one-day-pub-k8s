@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kamf-api
+spec:
+  template:
+    spec:
+      dnsConfig:
+        searches:
+        - "kamf-dev.svc.cluster.local"
+        - "svc.cluster.local"
+        - "cluster.local"

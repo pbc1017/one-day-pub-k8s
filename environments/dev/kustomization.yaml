@@ -11,6 +11,7 @@ resources:
 
 patches:
 - path: api-patch.yaml
+- path: api-dns-patch.yaml
 - path: web-patch.yaml
 - path: mysql-patch.yaml
 - path: mysql-hostport-patch.yaml
