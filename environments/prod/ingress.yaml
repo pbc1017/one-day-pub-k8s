@@ -1,11 +1,40 @@
-# Nginx Ingress for production environment
-# Replaces Traefik IngressRoute with standard Kubernetes Ingress
+# Web Ingress for production environment
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: kamf-prod-ingress
+  name: kamf-prod-web-ingress
   labels:
-    app: kamf
+    app: kamf-web
+    environment: production
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+    - hosts:
+        - kamf.site
+      secretName: kamf-prod-tls-web
+  rules:
+    - host: kamf.site
+      http:
+        paths:
+          # Web routes - catch all non-API paths
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kamf-web-service
+                port:
+                  number: 3000
+---
+# API Ingress for production environment
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kamf-prod-api-ingress
+  labels:
+    app: kamf-api
     environment: production
   annotations:
     kubernetes.io/ingress.class: nginx
@@ -16,24 +45,16 @@ spec:
   tls:
     - hosts:
         - kamf.site
-      secretName: kamf-prod-tls
+      secretName: kamf-prod-tls-api
   rules:
     - host: kamf.site
       http:
         paths:
           # API routes - handle /api prefix stripping with regex capture
-          - path: /api(/|$)(.*) 
+          - path: /api(/|$)(.*)
             pathType: ImplementationSpecific
             backend:
               service:
                 name: kamf-api-service
                 port:
                   number: 8000
-          # Web routes - catch all other paths
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: kamf-web-service
-                port:
-                  number: 3000
