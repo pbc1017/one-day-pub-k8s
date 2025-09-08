@@ -10,11 +10,11 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - port: 8000
-    targetPort: 8000
-    nodePort: 30801
-    protocol: TCP
-    name: http
+    - port: 8000
+      targetPort: 8000
+      nodePort: 30801
+      protocol: TCP
+      name: http
   selector:
     app: kamf-api
 ---
@@ -28,11 +28,11 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - port: 3000
-    targetPort: 3000
-    nodePort: 30901
-    protocol: TCP
-    name: http
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30901
+      protocol: TCP
+      name: http
   selector:
     app: kamf-web
 ---
@@ -46,10 +46,10 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - port: 3306
-    targetPort: 3306
-    nodePort: 31306
-    protocol: TCP
-    name: mysql
+    - port: 3306
+      targetPort: 3306
+      nodePort: 31306
+      protocol: TCP
+      name: mysql
   selector:
     app: mysql

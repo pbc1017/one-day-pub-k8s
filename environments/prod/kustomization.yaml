@@ -2,25 +2,26 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- ../../base/api
-- ../../base/web  
-- ../../base/mysql
-- namespace.yaml
-- nodeport-services.yaml
-- ingress.yaml
+  - ../../base/api
+  - ../../base/web
+  - ../../base/mysql
+  - namespace.yaml
+  - nodeport-services.yaml
+  - ingress.yaml
+  - www-redirect-ingress.yaml
 # - secrets.yaml  # Removed: Secrets applied directly via SSH
 
 patches:
-- path: api-patch.yaml
-- path: web-patch.yaml
-- path: mysql-patch.yaml
+  - path: api-patch.yaml
+  - path: web-patch.yaml
+  - path: mysql-patch.yaml
 
 images:
-- name: chansparcs/kamf-api
-  newName: chansparcs/kamf-api
-  newTag: latest-f4670260ef8730577632969d302dce8995ba828e
-- name: chansparcs/kamf-web  
-  newName: chansparcs/kamf-web
-  newTag: latest-f4670260ef8730577632969d302dce8995ba828e
+  - name: chansparcs/kamf-api
+    newName: chansparcs/kamf-api
+    newTag: latest-f4670260ef8730577632969d302dce8995ba828e
+  - name: chansparcs/kamf-web
+    newName: chansparcs/kamf-web
+    newTag: latest-f4670260ef8730577632969d302dce8995ba828e
 
 namespace: kamf-prod

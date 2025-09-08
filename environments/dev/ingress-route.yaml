@@ -12,11 +12,11 @@ spec:
     - web
     - websecure
   routes:
-  - match: Host(`dev.kamf.site`)
-    kind: Rule
-    services:
-    - name: kamf-web-service
-      port: 3000
+    - match: Host(`dev.kamf.site`)
+      kind: Rule
+      services:
+        - name: kamf-web-service
+          port: 3000
   tls:
     certResolver: letsencrypt
 ---
@@ -32,13 +32,13 @@ spec:
     - web
     - websecure
   routes:
-  - match: Host(`dev.kamf.site`) && PathPrefix(`/api`)
-    kind: Rule
-    services:
-    - name: kamf-api-service
-      port: 8000
-    middlewares:
-    - name: dev-api-stripprefix
+    - match: Host(`dev.kamf.site`) && PathPrefix(`/api`)
+      kind: Rule
+      services:
+        - name: kamf-api-service
+          port: 8000
+      middlewares:
+        - name: dev-api-stripprefix
   tls:
     certResolver: letsencrypt
 ---
