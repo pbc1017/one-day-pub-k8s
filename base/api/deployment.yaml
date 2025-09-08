@@ -54,6 +54,21 @@ spec:
             secretKeyRef:
               name: kamf-secrets
               key: refresh-token-secret
+        - name: MAILGUN_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: kamf-secrets
+              key: mailgun-api-key
+        - name: MAILGUN_DOMAIN
+          valueFrom:
+            secretKeyRef:
+              name: kamf-secrets
+              key: mailgun-domain
+        - name: MAILGUN_FROM_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: kamf-secrets
+              key: mailgun-from-email
         resources:
           requests:
             memory: "200Mi"
