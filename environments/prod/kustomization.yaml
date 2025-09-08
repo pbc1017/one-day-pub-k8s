@@ -7,7 +7,7 @@ resources:
 - ../../base/mysql
 - namespace.yaml
 - nodeport-services.yaml
-- ingress-route.yaml
+- ingress.yaml
 # - secrets.yaml  # Removed: Secrets applied directly via SSH
 
 patches:
