@@ -3,23 +3,24 @@ kind: Kustomization
 
 resources:
 - ../../base/api
-- ../../base/web
+- ../../base/web  
 - ../../base/mysql
 - namespace.yaml
 - nodeport-services.yaml
 - ingress-route.yaml
-- secrets.yaml
+# - secrets.yaml  # Removed: Secrets applied directly via SSH
 
-
-images:
-- name: chansparcs/kamf-api
-  newName: chansparcs/kamf-api
-  newTag: dev
-- name: chansparcs/kamf-web
-  newName: chansparcs/kamf-web
-  newTag: dev
-namespace: kamf-dev
 patches:
 - path: api-patch.yaml
 - path: web-patch.yaml
 - path: mysql-patch.yaml
+
+images:
+- name: chansparcs/kamf-api
+  newName: chansparcs/kamf-api
+  newTag: dev-fa65b843a780a89ab263124c8bb87957ef7f7a36
+- name: chansparcs/kamf-web  
+  newName: chansparcs/kamf-web
+  newTag: dev-fa65b843a780a89ab263124c8bb87957ef7f7a36
+
+namespace: kamf-dev
