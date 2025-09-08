@@ -18,9 +18,9 @@ patches:
 images:
 - name: chansparcs/kamf-api
   newName: chansparcs/kamf-api
-  newTag: latest-2f5c8dfcc39a89f924551625a47d15484c40253d
+  newTag: latest-f4670260ef8730577632969d302dce8995ba828e
 - name: chansparcs/kamf-web  
   newName: chansparcs/kamf-web
-  newTag: latest-2f5c8dfcc39a89f924551625a47d15484c40253d
+  newTag: latest-f4670260ef8730577632969d302dce8995ba828e
 
 namespace: kamf-prod
