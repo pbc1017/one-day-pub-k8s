@@ -9,6 +9,7 @@ metadata:
     environment: production
 spec:
   entryPoints:
+    - web
     - websecure
   routes:
   - match: Host(`kamf.site`)
@@ -28,6 +29,7 @@ metadata:
     environment: production
 spec:
   entryPoints:
+    - web
     - websecure
   routes:
   - match: Host(`kamf.site`) && PathPrefix(`/api`)
