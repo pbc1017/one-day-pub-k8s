@@ -14,7 +14,7 @@ spec:
   - match: Host(`kamf.site`)
     kind: Rule
     services:
-    - name: prod-kamf-web-service
+    - name: kamf-web-service
       port: 3000
   tls:
     certResolver: letsencrypt
@@ -33,7 +33,7 @@ spec:
   - match: Host(`kamf.site`) && PathPrefix(`/api`)
     kind: Rule
     services:
-    - name: prod-kamf-api-service
+    - name: kamf-api-service
       port: 8000
     middlewares:
     - name: prod-api-stripprefix
