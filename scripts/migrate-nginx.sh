@@ -9,13 +9,13 @@ if [ $# -lt 3 ]; then
     echo "사용법: $0 <서비스명> <K8s_NodePort> <K8s_비율>"
     echo ""
     echo "예시:"
-    echo "  $0 kamf_prod_api 30801 30    # API 30% K8s 전환"
-    echo "  $0 kamf_prod_web 30901 70    # Web 70% K8s 전환"
-    echo "  $0 kamf_prod_api 30801 100   # API 100% K8s 전환"
+    echo "  $0 one-day-pub_prod_api 30801 30    # API 30% K8s 전환"
+    echo "  $0 one-day-pub_prod_web 30901 70    # Web 70% K8s 전환"
+    echo "  $0 one-day-pub_prod_api 30801 100   # API 100% K8s 전환"
     echo ""
     echo "지원되는 서비스:"
-    echo "  - kamf_prod_api (운영 API)"
-    echo "  - kamf_prod_web (운영 Web)"
+    echo "  - one-day-pub_prod_api (운영 API)"
+    echo "  - one-day-pub_prod_web (운영 Web)"
     exit 1
 fi
 
@@ -24,9 +24,9 @@ K8S_NODEPORT=$2
 K8S_WEIGHT=$3
 
 # 입력값 검증
-if [[ ! "$SERVICE_NAME" =~ ^kamf_prod_(api|web)$ ]]; then
+if [[ ! "$SERVICE_NAME" =~ ^one-day-pub_prod_(api|web)$ ]]; then
     echo "❌ 잘못된 서비스명: $SERVICE_NAME"
-    echo "지원되는 서비스: kamf_prod_api, kamf_prod_web"
+    echo "지원되는 서비스: one-day-pub_prod_api, one-day-pub_prod_web"
     exit 1
 fi
 
@@ -42,12 +42,12 @@ echo "📊 전환 비율: Docker ${DOCKER_WEIGHT}% ← → K8s ${K8S_WEIGHT}%"
 
 # Docker 서비스 포트 매핑
 case $SERVICE_NAME in
-    "kamf_prod_api")
-        DOCKER_SERVICE="kamf-api"
+    "one-day-pub_prod_api")
+        DOCKER_SERVICE="one-day-pub-api"
         DOCKER_PORT="8000"
         ;;
-    "kamf_prod_web")
-        DOCKER_SERVICE="kamf-web"
+    "one-day-pub_prod_web")
+        DOCKER_SERVICE="one-day-pub-web"
         DOCKER_PORT="3000"
         ;;
 esac
@@ -55,8 +55,8 @@ esac
 echo "🎯 대상 서비스: $DOCKER_SERVICE (Docker:$DOCKER_PORT → K8s:$K8S_NODEPORT)"
 
 # nginx 컨테이너 존재 확인
-if ! docker ps | grep -q "kamf-nginx"; then
-    echo "❌ kamf-nginx 컨테이너를 찾을 수 없습니다."
+if ! docker ps | grep -q "one-day-pub-nginx"; then
+    echo "❌ one-day-pub-nginx 컨테이너를 찾을 수 없습니다."
     exit 1
 fi
 
@@ -102,41 +102,41 @@ cat /tmp/upstream_${SERVICE_NAME}.conf
 
 # nginx 설정 백업
 echo "💾 현재 nginx 설정 백업..."
-docker exec kamf-nginx cp /etc/nginx/conf.d/kamf-common.conf /etc/nginx/conf.d/kamf-common.conf.backup.$(date +%Y%m%d_%H%M%S)
+docker exec one-day-pub-nginx cp /etc/nginx/conf.d/one-day-pub-common.conf /etc/nginx/conf.d/one-day-pub-common.conf.backup.$(date +%Y%m%d_%H%M%S)
 
 # nginx 설정 파일에 upstream 설정 업데이트
 echo "🔧 nginx 설정 업데이트..."
 
 # 기존 upstream 블록 제거하고 새로운 설정 추가
-docker exec kamf-nginx bash -c "
+docker exec one-day-pub-nginx bash -c "
     # 기존 upstream $SERVICE_NAME 블록 제거
-    sed '/^upstream $SERVICE_NAME/,/^}/d' /etc/nginx/conf.d/kamf-common.conf > /tmp/new_config
+    sed '/^upstream $SERVICE_NAME/,/^}/d' /etc/nginx/conf.d/one-day-pub-common.conf > /tmp/new_config
     
     # 새로운 upstream 설정을 파일 맨 앞에 추가
-    cat /tmp/new_config > /etc/nginx/conf.d/kamf-common.conf.new
-    mv /etc/nginx/conf.d/kamf-common.conf.new /etc/nginx/conf.d/kamf-common.conf
+    cat /tmp/new_config > /etc/nginx/conf.d/one-day-pub-common.conf.new
+    mv /etc/nginx/conf.d/one-day-pub-common.conf.new /etc/nginx/conf.d/one-day-pub-common.conf
 "
 
 # 새로운 upstream 설정을 nginx 컨테이너에 복사
-docker cp /tmp/upstream_${SERVICE_NAME}.conf kamf-nginx:/tmp/upstream_${SERVICE_NAME}.conf
+docker cp /tmp/upstream_${SERVICE_NAME}.conf one-day-pub-nginx:/tmp/upstream_${SERVICE_NAME}.conf
 
 # nginx 설정 파일 앞쪽에 upstream 설정 추가
-docker exec kamf-nginx bash -c "
-    cat /tmp/upstream_${SERVICE_NAME}.conf /etc/nginx/conf.d/kamf-common.conf > /tmp/combined_config
-    mv /tmp/combined_config /etc/nginx/conf.d/kamf-common.conf
+docker exec one-day-pub-nginx bash -c "
+    cat /tmp/upstream_${SERVICE_NAME}.conf /etc/nginx/conf.d/one-day-pub-common.conf > /tmp/combined_config
+    mv /tmp/combined_config /etc/nginx/conf.d/one-day-pub-common.conf
 "
 
 # nginx 설정 문법 검사
 echo "🔍 nginx 설정 문법 검사..."
-if ! docker exec kamf-nginx nginx -t; then
+if ! docker exec one-day-pub-nginx nginx -t; then
     echo "❌ nginx 설정 오류! 백업에서 복원합니다..."
-    docker exec kamf-nginx bash -c "cp /etc/nginx/conf.d/kamf-common.conf.backup.* /etc/nginx/conf.d/kamf-common.conf"
+    docker exec one-day-pub-nginx bash -c "cp /etc/nginx/conf.d/one-day-pub-common.conf.backup.* /etc/nginx/conf.d/one-day-pub-common.conf"
     exit 1
 fi
 
 # nginx 설정 리로드
 echo "🔄 nginx 설정 리로드..."
-docker exec kamf-nginx nginx -s reload
+docker exec one-day-pub-nginx nginx -s reload
 
 # 임시 파일 정리
 rm -f /tmp/upstream_${SERVICE_NAME}.conf
@@ -147,11 +147,11 @@ sleep 5
 
 # 서비스별 헬스체크 URL 설정
 case $SERVICE_NAME in
-    "kamf_prod_api")
-        HEALTH_URL="https://kamf.site/api/health"
+    "one-day-pub_prod_api")
+        HEALTH_URL="https://one-day-pub.site/api/health"
         ;;
-    "kamf_prod_web")
-        HEALTH_URL="https://kamf.site/"
+    "one-day-pub_prod_web")
+        HEALTH_URL="https://one-day-pub.site/"
         ;;
 esac
 
@@ -190,6 +190,6 @@ else
 fi
 echo ""
 echo "📝 유용한 명령어:"
-echo "  docker exec kamf-nginx cat /etc/nginx/conf.d/kamf-common.conf  # 설정 확인"
-echo "  docker exec kamf-nginx nginx -s reload                         # 수동 리로드"
+echo "  docker exec one-day-pub-nginx cat /etc/nginx/conf.d/one-day-pub-common.conf  # 설정 확인"
+echo "  docker exec one-day-pub-nginx nginx -s reload                         # 수동 리로드"
 echo "  ./rollback.sh nginx                                            # nginx 설정 롤백"

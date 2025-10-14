@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: kamf-web-service
+  name: one-day-pub-web-service
   labels:
-    app: kamf-web
+    app: one-day-pub-web
     component: frontend
 spec:
   type: ClusterIP
@@ -13,4 +13,4 @@ spec:
     protocol: TCP
     name: http
   selector:
-    app: kamf-web
+    app: one-day-pub-web

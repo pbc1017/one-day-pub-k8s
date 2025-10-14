@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kamf-api
+  name: one-day-pub-api
 spec:
   template:
     spec:
       dnsConfig:
         searches:
-        - "kamf-prod.svc.cluster.local"
+        - "one-day-pub-prod.svc.cluster.local"
         - "svc.cluster.local"
         - "cluster.local"

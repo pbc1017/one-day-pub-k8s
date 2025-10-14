@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kamf-web
+  name: one-day-pub-web
   labels:
-    app: kamf-web
+    app: one-day-pub-web
     component: frontend
 spec:
   replicas: 1  # Will be overridden by environments
   selector:
     matchLabels:
-      app: kamf-web
+      app: one-day-pub-web
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -18,12 +18,12 @@ spec:
   template:
     metadata:
       labels:
-        app: kamf-web
+        app: one-day-pub-web
         component: frontend
     spec:
       containers:
       - name: web
-        image: chansparcs/kamf-web:latest  # Will be updated by CI/CD
+        image: chansparcs/one-day-pub-web:latest  # Will be updated by CI/CD
         ports:
         - containerPort: 3000
           name: http
@@ -31,14 +31,14 @@ spec:
         - name: NODE_ENV
           value: "production"
         - name: NEXT_PUBLIC_API_URL
-          value: "https://kamf.site/api"  # Will be overridden by environments
+          value: "https://one-day-pub.site/api"  # Will be overridden by environments
         - name: NEXTAUTH_SECRET
           valueFrom:
             secretKeyRef:
-              name: kamf-secrets
+              name: one-day-pub-secrets
               key: nextauth-secret
         - name: NEXTAUTH_URL
-          value: "https://kamf.site"  # Will be overridden by environments
+          value: "https://one-day-pub.site"  # Will be overridden by environments
         resources:
           requests:
             memory: "100Mi"

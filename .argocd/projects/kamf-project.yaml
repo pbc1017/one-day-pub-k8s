@@ -1,24 +1,24 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: kamf-project
+  name: one-day-pub-project
   namespace: argocd
   labels:
-    app.kubernetes.io/name: kamf-project
-    app.kubernetes.io/part-of: kamf
+    app.kubernetes.io/name: one-day-pub-project
+    app.kubernetes.io/part-of: one-day-pub
 spec:
-  description: KAMF Application Project for GitOps deployment
+  description: One Day Pub Application Project for GitOps deployment
   
   # 소스 레포지토리 제한
   sourceRepos:
-  - https://github.com/pbc1017/KAMF-k8s.git
-  - https://github.com/pbc1017/KAMF-k8s  # SSH 버전도 허용
+  - https://github.com/pbc1017/One Day Pub-k8s.git
+  - https://github.com/pbc1017/One Day Pub-k8s  # SSH 버전도 허용
   
   # 배포 대상 클러스터 및 네임스페이스 제한
   destinations:
-  - namespace: kamf-dev
+  - namespace: one-day-pub-dev
     server: https://kubernetes.default.svc
-  - namespace: kamf-prod
+  - namespace: one-day-pub-prod
     server: https://kubernetes.default.svc
   - namespace: argocd  # Root app을 위한 argocd 네임스페이스
     server: https://kubernetes.default.svc
@@ -53,34 +53,34 @@ spec:
   - name: developer
     description: Developers can view and sync dev environment
     policies:
-    - p, proj:kamf-project:developer, applications, get, kamf-project/kamf-dev, allow
-    - p, proj:kamf-project:developer, applications, sync, kamf-project/kamf-dev, allow
-    - p, proj:kamf-project:developer, applications, action/*, kamf-project/kamf-dev, allow
-    - p, proj:kamf-project:developer, repositories, get, *, allow
-    - p, proj:kamf-project:developer, logs, get, kamf-project/kamf-dev, allow
+    - p, proj:one-day-pub-project:developer, applications, get, one-day-pub-project/one-day-pub-dev, allow
+    - p, proj:one-day-pub-project:developer, applications, sync, one-day-pub-project/one-day-pub-dev, allow
+    - p, proj:one-day-pub-project:developer, applications, action/*, one-day-pub-project/one-day-pub-dev, allow
+    - p, proj:one-day-pub-project:developer, repositories, get, *, allow
+    - p, proj:one-day-pub-project:developer, logs, get, one-day-pub-project/one-day-pub-dev, allow
     groups:
-    - kamf-developers
+    - one-day-pub-developers
     
   # 운영자 역할
   - name: operator
     description: Operators can manage both dev and prod environments
     policies:
-    - p, proj:kamf-project:operator, applications, *, kamf-project/*, allow
-    - p, proj:kamf-project:operator, repositories, *, *, allow
-    - p, proj:kamf-project:operator, logs, *, kamf-project/*, allow
-    - p, proj:kamf-project:operator, exec, *, kamf-project/*, allow
+    - p, proj:one-day-pub-project:operator, applications, *, one-day-pub-project/*, allow
+    - p, proj:one-day-pub-project:operator, repositories, *, *, allow
+    - p, proj:one-day-pub-project:operator, logs, *, one-day-pub-project/*, allow
+    - p, proj:one-day-pub-project:operator, exec, *, one-day-pub-project/*, allow
     groups:
-    - kamf-operators
-    - kamf-admins
+    - one-day-pub-operators
+    - one-day-pub-admins
   
   # 읽기 전용 역할
   - name: readonly
     description: Read-only access to all applications
     policies:
-    - p, proj:kamf-project:readonly, applications, get, kamf-project/*, allow
-    - p, proj:kamf-project:readonly, logs, get, kamf-project/*, allow
+    - p, proj:one-day-pub-project:readonly, applications, get, one-day-pub-project/*, allow
+    - p, proj:one-day-pub-project:readonly, logs, get, one-day-pub-project/*, allow
     groups:
-    - kamf-viewers
+    - one-day-pub-viewers
   
   # 동기화 정책
   syncWindows:
@@ -89,6 +89,6 @@ spec:
     schedule: "0 2-4 * * *"  # 매일 새벽 2-4시는 동기화 금지
     duration: 2h
     applications:
-    - kamf-prod
+    - one-day-pub-prod
     manualSync: false
     timeZone: "Asia/Seoul"

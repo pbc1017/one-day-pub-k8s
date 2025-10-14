@@ -6,10 +6,10 @@ resources:
 - service.yaml
 
 commonLabels:
-  app.kubernetes.io/name: kamf-web
+  app.kubernetes.io/name: one-day-pub-web
   app.kubernetes.io/component: frontend
-  app.kubernetes.io/part-of: kamf
+  app.kubernetes.io/part-of: one-day-pub
 
 images:
-- name: chansparcs/kamf-web
+- name: chansparcs/one-day-pub-web
   newTag: latest

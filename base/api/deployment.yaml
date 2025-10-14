@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kamf-api
+  name: one-day-pub-api
   labels:
-    app: kamf-api
+    app: one-day-pub-api
     component: backend
 spec:
   replicas: 1 # Will be overridden by environments
   selector:
     matchLabels:
-      app: kamf-api
+      app: one-day-pub-api
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       labels:
-        app: kamf-api
+        app: one-day-pub-api
         component: backend
     spec:
       dnsPolicy: "None"
@@ -39,7 +39,7 @@ spec:
           value: "2"
       containers:
       - name: api
-        image: chansparcs/kamf-api:latest # Will be updated by CI/CD
+        image: chansparcs/one-day-pub-api:latest # Will be updated by CI/CD
         ports:
         - containerPort: 8000
           name: http
@@ -53,37 +53,37 @@ spec:
         - name: DB_USERNAME
           valueFrom:
             secretKeyRef:
-              name: kamf-secrets
+              name: one-day-pub-secrets
               key: db-username
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: kamf-secrets
+              name: one-day-pub-secrets
               key: db-password
         - name: JWT_SECRET
           valueFrom:
             secretKeyRef:
-              name: kamf-secrets
+              name: one-day-pub-secrets
               key: jwt-secret
         - name: REFRESH_TOKEN_SECRET
           valueFrom:
             secretKeyRef:
-              name: kamf-secrets
+              name: one-day-pub-secrets
               key: refresh-token-secret
         - name: MAILGUN_API_KEY
           valueFrom:
             secretKeyRef:
-              name: kamf-secrets
+              name: one-day-pub-secrets
               key: mailgun-api-key
         - name: MAILGUN_DOMAIN
           valueFrom:
             secretKeyRef:
-              name: kamf-secrets
+              name: one-day-pub-secrets
               key: mailgun-domain
         - name: MAILGUN_FROM_EMAIL
           valueFrom:
             secretKeyRef:
-              name: kamf-secrets
+              name: one-day-pub-secrets
               key: mailgun-from-email
         - name: UV_THREADPOOL_SIZE
           value: '20'

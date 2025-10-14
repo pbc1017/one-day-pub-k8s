@@ -7,8 +7,8 @@ set -e
 echo "🚀 K3s 클러스터 설치 시작..."
 
 # 현재 사용자 확인
-if [ "$USER" != "kamf" ]; then
-    echo "⚠️  kamf 사용자로 실행해주세요"
+if [ "$USER" != "one-day-pub" ]; then
+    echo "⚠️  one-day-pub 사용자로 실행해주세요"
     exit 1
 fi
 
@@ -60,13 +60,13 @@ kubectl get pods -A
 echo "🌐 Traefik Ingress Controller 확인..."
 kubectl get pods -n kube-system -l app.kubernetes.io/name=traefik
 
-# KAMF 네임스페이스 생성
-echo "📁 KAMF 네임스페이스 생성..."
-kubectl create namespace kamf-dev --dry-run=client -o yaml | kubectl apply -f -
-kubectl create namespace kamf-prod --dry-run=client -o yaml | kubectl apply -f -
+# One Day Pub 네임스페이스 생성
+echo "📁 One Day Pub 네임스페이스 생성..."
+kubectl create namespace one-day-pub-dev --dry-run=client -o yaml | kubectl apply -f -
+kubectl create namespace one-day-pub-prod --dry-run=client -o yaml | kubectl apply -f -
 
 # 네임스페이스 확인
-kubectl get namespaces | grep kamf
+kubectl get namespaces | grep one-day-pub
 
 echo ""
 echo "🎉 K3s 클러스터 설치 완료!"
@@ -75,7 +75,7 @@ echo "📋 설치 정보:"
 echo "- K3s 버전: $(k3s --version | head -1)"
 echo "- 외부 IP: $EXTERNAL_IP" 
 echo "- Kubeconfig: ~/.kube/config"
-echo "- 네임스페이스: kamf-dev, kamf-prod"
+echo "- 네임스페이스: one-day-pub-dev, one-day-pub-prod"
 echo ""
 echo "🔗 다음 단계:"
 echo "  ./install-argocd.sh     # ArgoCD 설치"

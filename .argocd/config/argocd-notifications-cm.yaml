@@ -25,7 +25,7 @@ data:
   # 알림 템플릿
   template.app-deployed: |
     email:
-      subject: KAMF Application deployed
+      subject: One Day Pub Application deployed
     message: |
       Application {{.app.metadata.name}} has been deployed to {{.app.spec.destination.namespace}}.
       Operation details:
@@ -64,7 +64,7 @@ data:
   
   template.app-health-degraded: |
     email:
-      subject: KAMF Application health degraded
+      subject: One Day Pub Application health degraded
     message: |
       Application {{.app.metadata.name}} health is degraded.
       Application details:
@@ -92,7 +92,7 @@ data:
   
   template.app-sync-failed: |
     email:
-      subject: KAMF Application sync failed
+      subject: One Day Pub Application sync failed
     message: |
       Application {{.app.metadata.name}} sync failed.
       Sync operation details:
@@ -127,7 +127,7 @@ data:
   subscriptions: |
     # 운영환경 배포 알림
     - recipients:
-      - slack:kamf-deploy
+      - slack:one-day-pub-deploy
       triggers:
       - on-deployed
       - on-health-degraded  
@@ -136,7 +136,7 @@ data:
     
     # 개발환경 배포 알림 (실패 시만)
     - recipients:
-      - slack:kamf-dev
+      - slack:one-day-pub-dev
       triggers:
       - on-sync-failed
       selector: environment=development

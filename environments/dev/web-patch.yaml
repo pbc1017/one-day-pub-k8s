@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kamf-web
+  name: one-day-pub-web
 spec:
   replicas: 1
   template:
@@ -12,9 +12,9 @@ spec:
         - name: NODE_ENV
           value: "production"
         - name: NEXT_PUBLIC_API_URL
-          value: "https://dev.kamf.site/api"
+          value: "https://dev.one-day-pub.site/api"
         - name: NEXTAUTH_URL
-          value: "https://dev.kamf.site"
+          value: "https://dev.one-day-pub.site"
         resources:
           requests:
             memory: "64Mi"

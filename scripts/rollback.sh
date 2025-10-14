@@ -32,7 +32,7 @@ fi
 
 ROLLBACK_TARGET=$1
 
-echo -e "${BLUE}♾️  KAMF 롤백 시작: $ROLLBACK_TARGET${NC}"
+echo -e "${BLUE}♾️  One Day Pub 롤백 시작: $ROLLBACK_TARGET${NC}"
 echo "⏰ 실행 시간: $(date)"
 echo ""
 
@@ -54,10 +54,10 @@ rollback_dev() {
     echo -e "${BLUE}🔄 개발환경 롤백 시작...${NC}"
     
     # K8s dev 서비스 중단
-    if kubectl get namespace kamf-dev >/dev/null 2>&1; then
+    if kubectl get namespace one-day-pub-dev >/dev/null 2>&1; then
         echo "🛑 K8s dev 서비스 중단..."
-        kubectl delete namespace kamf-dev --ignore-not-found=true
-        echo "✅ kamf-dev 네임스페이스 삭제 완료"
+        kubectl delete namespace one-day-pub-dev --ignore-not-found=true
+        echo "✅ one-day-pub-dev 네임스페이스 삭제 완료"
     fi
     
     # Docker dev 서비스 시작
@@ -69,8 +69,8 @@ rollback_dev() {
     else
         echo "⚠️  docker-compose.dev.yml 파일을 찾을 수 없습니다."
         echo "수동으로 Docker dev 서비스를 시작하세요:"
-        echo "  docker run -d --name kamf-dev-api chansparcs/kamf-api:dev"
-        echo "  docker run -d --name kamf-dev-web chansparcs/kamf-web:dev"
+        echo "  docker run -d --name one-day-pub-dev-api chansparcs/one-day-pub-api:dev"
+        echo "  docker run -d --name one-day-pub-dev-web chansparcs/one-day-pub-web:dev"
     fi
     
     echo -e "${GREEN}✅ 개발환경 롤백 완료${NC}"
@@ -81,14 +81,14 @@ rollback_prod() {
     
     # nginx upstream을 100% Docker로 복원
     echo "🌐 nginx upstream 100% Docker 복원..."
-    if docker ps | grep -q "kamf-nginx"; then
+    if docker ps | grep -q "one-day-pub-nginx"; then
         # nginx 백업 설정 복원
-        BACKUP_FILE=$(docker exec kamf-nginx ls -t /etc/nginx/conf.d/kamf-common.conf.backup.* 2>/dev/null | head -1 || echo "")
+        BACKUP_FILE=$(docker exec one-day-pub-nginx ls -t /etc/nginx/conf.d/one-day-pub-common.conf.backup.* 2>/dev/null | head -1 || echo "")
         if [ -n "$BACKUP_FILE" ]; then
             echo "💾 nginx 설정 백업에서 복원: $BACKUP_FILE"
-            docker exec kamf-nginx cp "$BACKUP_FILE" /etc/nginx/conf.d/kamf-common.conf
-            docker exec kamf-nginx nginx -t
-            docker exec kamf-nginx nginx -s reload
+            docker exec one-day-pub-nginx cp "$BACKUP_FILE" /etc/nginx/conf.d/one-day-pub-common.conf
+            docker exec one-day-pub-nginx nginx -t
+            docker exec one-day-pub-nginx nginx -s reload
             echo "✅ nginx 설정 복원 완료"
         else
             echo "⚠️  nginx 백업 설정을 찾을 수 없습니다."
@@ -98,15 +98,15 @@ rollback_prod() {
     
     # Docker prod 서비스 시작
     echo "🚀 Docker prod 서비스 시작..."
-    docker start kamf-api kamf-web 2>/dev/null || {
+    docker start one-day-pub-api one-day-pub-web 2>/dev/null || {
         echo "⚠️  Docker prod 서비스 시작 실패. 수동으로 확인하세요."
     }
     
     # K8s prod 서비스 중단 (선택적)
     echo "🛑 K8s prod 서비스 중단..."
-    if kubectl get namespace kamf-prod >/dev/null 2>&1; then
-        kubectl delete namespace kamf-prod --ignore-not-found=true
-        echo "✅ kamf-prod 네임스페이스 삭제 완료"
+    if kubectl get namespace one-day-pub-prod >/dev/null 2>&1; then
+        kubectl delete namespace one-day-pub-prod --ignore-not-found=true
+        echo "✅ one-day-pub-prod 네임스페이스 삭제 완료"
     fi
     
     echo -e "${GREEN}✅ 운영환경 롤백 완료${NC}"
@@ -115,16 +115,16 @@ rollback_prod() {
 rollback_nginx() {
     echo -e "${BLUE}🔄 nginx 설정 롤백 시작...${NC}"
     
-    if docker ps | grep -q "kamf-nginx"; then
+    if docker ps | grep -q "one-day-pub-nginx"; then
         # 최신 백업 파일 찾기
-        BACKUP_FILE=$(docker exec kamf-nginx ls -t /etc/nginx/conf.d/kamf-common.conf.backup.* 2>/dev/null | head -1 || echo "")
+        BACKUP_FILE=$(docker exec one-day-pub-nginx ls -t /etc/nginx/conf.d/one-day-pub-common.conf.backup.* 2>/dev/null | head -1 || echo "")
         if [ -n "$BACKUP_FILE" ]; then
             echo "💾 nginx 설정 백업에서 복원: $BACKUP_FILE"
-            docker exec kamf-nginx cp "$BACKUP_FILE" /etc/nginx/conf.d/kamf-common.conf
+            docker exec one-day-pub-nginx cp "$BACKUP_FILE" /etc/nginx/conf.d/one-day-pub-common.conf
             
             # 설정 검증
-            if docker exec kamf-nginx nginx -t; then
-                docker exec kamf-nginx nginx -s reload
+            if docker exec one-day-pub-nginx nginx -t; then
+                docker exec one-day-pub-nginx nginx -s reload
                 echo -e "${GREEN}✅ nginx 설정 롤백 완료${NC}"
             else
                 echo -e "${RED}❌ nginx 설정 오류! 수동 확인 필요${NC}"
@@ -134,7 +134,7 @@ rollback_nginx() {
             echo -e "${YELLOW}⚠️  nginx 백업 설정을 찾을 수 없습니다${NC}"
         fi
     else
-        echo -e "${YELLOW}⚠️  kamf-nginx 컨테이너를 찾을 수 없습니다${NC}"
+        echo -e "${YELLOW}⚠️  one-day-pub-nginx 컨테이너를 찾을 수 없습니다${NC}"
     fi
 }
 
@@ -211,7 +211,7 @@ rollback_all() {
     
     # 모든 Docker 서비스 시작 확인
     echo "🚀 모든 Docker 서비스 시작 확인..."
-    docker start kamf-nginx kamf-api kamf-web kamf-mysql 2>/dev/null || {
+    docker start one-day-pub-nginx one-day-pub-api one-day-pub-web one-day-pub-mysql 2>/dev/null || {
         echo "⚠️  일부 Docker 서비스 시작 실패. 수동으로 확인하세요."
     }
     

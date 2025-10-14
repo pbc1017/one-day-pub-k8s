@@ -15,35 +15,35 @@ data:
   # 그룹 기반 역할 매핑
   policy.csv: |
     # 관리자 그룹
-    g, kamf-admins, role:admin
+    g, one-day-pub-admins, role:admin
     g, argocd-admins, role:admin
     
     # 개발팀 권한
-    g, kamf-developers, role:kamf-developer
-    g, kamf-operators, role:kamf-operator  
-    g, kamf-viewers, role:readonly
+    g, one-day-pub-developers, role:one-day-pub-developer
+    g, one-day-pub-operators, role:one-day-pub-operator  
+    g, one-day-pub-viewers, role:readonly
     
     # 커스텀 역할 정의
-    p, role:kamf-developer, applications, get, */*, allow
-    p, role:kamf-developer, applications, sync, kamf-project/kamf-dev, allow
-    p, role:kamf-developer, applications, action/*, kamf-project/kamf-dev, allow
-    p, role:kamf-developer, logs, get, kamf-project/kamf-dev, allow
-    p, role:kamf-developer, repositories, get, *, allow
+    p, role:one-day-pub-developer, applications, get, */*, allow
+    p, role:one-day-pub-developer, applications, sync, one-day-pub-project/one-day-pub-dev, allow
+    p, role:one-day-pub-developer, applications, action/*, one-day-pub-project/one-day-pub-dev, allow
+    p, role:one-day-pub-developer, logs, get, one-day-pub-project/one-day-pub-dev, allow
+    p, role:one-day-pub-developer, repositories, get, *, allow
     
-    p, role:kamf-operator, applications, *, kamf-project/*, allow
-    p, role:kamf-operator, repositories, *, *, allow
-    p, role:kamf-operator, logs, *, kamf-project/*, allow
-    p, role:kamf-operator, exec, *, kamf-project/*, allow
+    p, role:one-day-pub-operator, applications, *, one-day-pub-project/*, allow
+    p, role:one-day-pub-operator, repositories, *, *, allow
+    p, role:one-day-pub-operator, logs, *, one-day-pub-project/*, allow
+    p, role:one-day-pub-operator, exec, *, one-day-pub-project/*, allow
     
     # 운영환경 특별 제한
-    p, role:kamf-developer, applications, sync, kamf-project/kamf-prod, deny
-    p, role:kamf-developer, applications, delete, kamf-project/kamf-prod, deny
+    p, role:one-day-pub-developer, applications, sync, one-day-pub-project/one-day-pub-prod, deny
+    p, role:one-day-pub-developer, applications, delete, one-day-pub-project/one-day-pub-prod, deny
   
   # OIDC/SSO 설정 (향후 확장용)
   # oidc.config: |
-  #   name: KAMF SSO
+  #   name: One Day Pub SSO
   #   issuer: https://your-oidc-provider.com
-  #   clientId: kamf-argocd
+  #   clientId: one-day-pub-argocd
   #   requestedScopes: ["openid", "profile", "email", "groups"]
   #   requestedIDTokenClaims: {"groups": {"essential": true}}
   

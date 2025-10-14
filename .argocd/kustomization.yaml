@@ -6,11 +6,11 @@ namespace: argocd
 
 resources:
 # AppProject
-- projects/kamf-project.yaml
+- projects/one-day-pub-project.yaml
 
 # Applications
-- applications/kamf-dev.yaml
-- applications/kamf-prod.yaml
+- applications/one-day-pub-dev.yaml
+- applications/one-day-pub-prod.yaml
 - applications/root-app.yaml
 
 # ArgoCD 서버 설정
@@ -24,5 +24,5 @@ resources:
 labels:
 - pairs:
     app.kubernetes.io/managed-by: argocd
-    app.kubernetes.io/part-of: kamf
+    app.kubernetes.io/part-of: one-day-pub
   includeSelectors: true

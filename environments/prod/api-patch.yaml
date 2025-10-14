@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kamf-api
+  name: one-day-pub-api
 spec:
   replicas: 2  # High availability
   template:
@@ -16,7 +16,7 @@ spec:
         - name: DB_PORT
           value: "3306"
         - name: DB_NAME
-          value: "kamf_prod"
+          value: "one-day-pub_prod"
         resources:
           requests:
             memory: "200Mi"

@@ -1,25 +1,25 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kamf-dev
+  name: one-day-pub-dev
   namespace: argocd
   labels:
-    app.kubernetes.io/name: kamf-dev
-    app.kubernetes.io/part-of: kamf
+    app.kubernetes.io/name: one-day-pub-dev
+    app.kubernetes.io/part-of: one-day-pub
     environment: development
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: kamf-project
+  project: one-day-pub-project
   
   source:
-    repoURL: https://github.com/pbc1017/KAMF-k8s.git
+    repoURL: https://github.com/pbc1017/one-day-pub-sub-k8s.git
     targetRevision: HEAD
     path: environments/dev
   
   destination:
     server: https://kubernetes.default.svc
-    namespace: kamf-dev
+    namespace: one-day-pub-dev
   
   syncPolicy:
     # GitOps: 자동 동기화 활성화 🚀

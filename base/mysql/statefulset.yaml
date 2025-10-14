@@ -27,19 +27,19 @@ spec:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: kamf-secrets
+              name: one-day-pub-secrets
               key: mysql-root-password
         - name: MYSQL_DATABASE
-          value: "kamf"
+          value: "one-day-pub"
         - name: MYSQL_USER
           valueFrom:
             secretKeyRef:
-              name: kamf-secrets
+              name: one-day-pub-secrets
               key: db-username
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: kamf-secrets
+              name: one-day-pub-secrets
               key: db-password
         resources:
           requests:

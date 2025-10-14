@@ -1,6 +1,6 @@
 #!/bin/bash
 # ArgoCD 설치 스크립트
-# Phase 6: GitOps 플랫폼 설치 및 KAMF 레포 연결
+# Phase 6: GitOps 플랫폼 설치 및 One Day Pub 레포 연결
 
 set -e
 
@@ -93,7 +93,7 @@ echo "- Password: $ARGOCD_PASSWORD"
 echo ""
 echo "🔗 다음 단계:"
 echo "  1. 웹 브라우저에서 ArgoCD UI 접속 확인"
-echo "  2. KAMF GitOps 레포 연결"
+echo "  2. One Day Pub GitOps 레포 연결"
 echo "  3. ./connect-gitops.sh 실행 (별도 작성 필요)"
 echo ""
 echo "📝 참고 명령어:"

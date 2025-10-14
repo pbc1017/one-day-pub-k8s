@@ -3,19 +3,19 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: kamf-prod-web
+  name: one-day-pub-prod-web
   labels:
-    app: kamf-web
+    app: one-day-pub-web
     environment: production
 spec:
   entryPoints:
     - web
     - websecure
   routes:
-    - match: Host(`kamf.site`)
+    - match: Host(`one-day-pub.site`)
       kind: Rule
       services:
-        - name: kamf-web-service
+        - name: one-day-pub-web-service
           port: 3000
   tls:
     certResolver: letsencrypt
@@ -23,19 +23,19 @@ spec:
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: kamf-prod-api
+  name: one-day-pub-prod-api
   labels:
-    app: kamf-api
+    app: one-day-pub-api
     environment: production
 spec:
   entryPoints:
     - web
     - websecure
   routes:
-    - match: Host(`kamf.site`) && PathPrefix(`/api`)
+    - match: Host(`one-day-pub.site`) && PathPrefix(`/api`)
       kind: Rule
       services:
-        - name: kamf-api-service
+        - name: one-day-pub-api-service
           port: 8000
       middlewares:
         - name: prod-api-stripprefix

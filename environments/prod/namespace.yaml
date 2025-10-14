@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: kamf-prod
+  name: one-day-pub-prod
   labels:
-    name: kamf-prod
+    name: one-day-pub-prod
     environment: production
-    app.kubernetes.io/part-of: kamf
+    app.kubernetes.io/part-of: one-day-pub

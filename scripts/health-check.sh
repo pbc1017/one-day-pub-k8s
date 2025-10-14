@@ -17,7 +17,7 @@ status_warn() { echo -e "${YELLOW}⚠️  $1${NC}"; }
 status_error() { echo -e "${RED}❌ $1${NC}"; }
 status_info() { echo -e "${BLUE}ℹ️  $1${NC}"; }
 
-echo "🌡 KAMF 시스템 헬스체크 시작..."
+echo "🌡 One Day Pub 시스템 헬스체크 시작..."
 echo "⏰ 실행 시간: $(date)"
 echo ""
 
@@ -78,32 +78,32 @@ if command -v kubectl >/dev/null 2>&1 && kubectl cluster-info >/dev/null 2>&1; t
         kubectl get pods -n kube-system --no-headers | grep -v Running | grep -v Completed
     fi
     
-    # KAMF 파드 상태
+    # One Day Pub 파드 상태
     echo ""
-    echo "📦 KAMF 파드 상태:"
+    echo "📦 One Day Pub 파드 상태:"
     
     # dev 환경
-    if kubectl get namespace kamf-dev >/dev/null 2>&1; then
-        DEV_PODS_NOT_READY=$(kubectl get pods -n kamf-dev --no-headers | grep -v Running | grep -v Completed | wc -l)
-        DEV_PODS_TOTAL=$(kubectl get pods -n kamf-dev --no-headers | wc -l)
-        echo "  🔹 kamf-dev: $((DEV_PODS_TOTAL - DEV_PODS_NOT_READY))/$DEV_PODS_TOTAL 파드 Ready"
+    if kubectl get namespace one-day-pub-dev >/dev/null 2>&1; then
+        DEV_PODS_NOT_READY=$(kubectl get pods -n one-day-pub-dev --no-headers | grep -v Running | grep -v Completed | wc -l)
+        DEV_PODS_TOTAL=$(kubectl get pods -n one-day-pub-dev --no-headers | wc -l)
+        echo "  🔹 one-day-pub-dev: $((DEV_PODS_TOTAL - DEV_PODS_NOT_READY))/$DEV_PODS_TOTAL 파드 Ready"
         if [ "$DEV_PODS_NOT_READY" -gt 0 ]; then
-            status_warn "kamf-dev 파드 $DEV_PODS_NOT_READY 개 비정상"
+            status_warn "one-day-pub-dev 파드 $DEV_PODS_NOT_READY 개 비정상"
         fi
     else
-        status_info "kamf-dev 네임스페이스 없음"
+        status_info "one-day-pub-dev 네임스페이스 없음"
     fi
     
     # prod 환경
-    if kubectl get namespace kamf-prod >/dev/null 2>&1; then
-        PROD_PODS_NOT_READY=$(kubectl get pods -n kamf-prod --no-headers | grep -v Running | grep -v Completed | wc -l)
-        PROD_PODS_TOTAL=$(kubectl get pods -n kamf-prod --no-headers | wc -l)
-        echo "  🔹 kamf-prod: $((PROD_PODS_TOTAL - PROD_PODS_NOT_READY))/$PROD_PODS_TOTAL 파드 Ready"
+    if kubectl get namespace one-day-pub-prod >/dev/null 2>&1; then
+        PROD_PODS_NOT_READY=$(kubectl get pods -n one-day-pub-prod --no-headers | grep -v Running | grep -v Completed | wc -l)
+        PROD_PODS_TOTAL=$(kubectl get pods -n one-day-pub-prod --no-headers | wc -l)
+        echo "  🔹 one-day-pub-prod: $((PROD_PODS_TOTAL - PROD_PODS_NOT_READY))/$PROD_PODS_TOTAL 파드 Ready"
         if [ "$PROD_PODS_NOT_READY" -gt 0 ]; then
-            status_error "kamf-prod 파드 $PROD_PODS_NOT_READY 개 비정상"
+            status_error "one-day-pub-prod 파드 $PROD_PODS_NOT_READY 개 비정상"
         fi
     else
-        status_info "kamf-prod 네임스페이스 없음"
+        status_info "one-day-pub-prod 네임스페이스 없음"
     fi
     
     # ArgoCD 상태
@@ -129,20 +129,20 @@ echo "🐳 3. Docker 서비스 상태"
 echo "────────────────────────────"
 
 if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
-    # KAMF 컨테이너 상태
-    KAMF_CONTAINERS=$(docker ps --format "table {{.Names}}\t{{.Status}}" | grep kamf)
-    if [ -n "$KAMF_CONTAINERS" ]; then
-        echo "📦 KAMF 컨테이너:"
-        echo "$KAMF_CONTAINERS"
+    # One Day Pub 컨테이너 상태
+    One Day Pub_CONTAINERS=$(docker ps --format "table {{.Names}}\t{{.Status}}" | grep one-day-pub)
+    if [ -n "$One Day Pub_CONTAINERS" ]; then
+        echo "📦 One Day Pub 컨테이너:"
+        echo "$One Day Pub_CONTAINERS"
         
         # nginx 컨테이너 특별 확인
-        if docker ps | grep -q "kamf-nginx"; then
+        if docker ps | grep -q "one-day-pub-nginx"; then
             status_ok "nginx 리버스 프록시 실행 중"
         else
             status_error "nginx 리버스 프록시 중단됨"
         fi
     else
-        status_info "실행 중인 KAMF 컨테이너 없음"
+        status_info "실행 중인 One Day Pub 컨테이너 없음"
     fi
 else
     status_error "Docker 접근 불가"
@@ -192,7 +192,7 @@ echo ""
 echo "🔌 NodePort 서비스 테스트:"
 
 # dev API NodePort
-DEV_API_PORT=$(kubectl get svc -n kamf-dev api-nodeport -o jsonpath='{.spec.ports[0].nodePort}' 2>/dev/null || echo "30800")
+DEV_API_PORT=$(kubectl get svc -n one-day-pub-dev api-nodeport -o jsonpath='{.spec.ports[0].nodePort}' 2>/dev/null || echo "30800")
 if curl -f -s -m 5 "http://localhost:$DEV_API_PORT/health" >/dev/null 2>&1; then
     status_ok "dev API NodePort ($DEV_API_PORT) 정상"
 else
@@ -200,7 +200,7 @@ else
 fi
 
 # prod API NodePort
-PROD_API_PORT=$(kubectl get svc -n kamf-prod api-nodeport -o jsonpath='{.spec.ports[0].nodePort}' 2>/dev/null || echo "30801")
+PROD_API_PORT=$(kubectl get svc -n one-day-pub-prod api-nodeport -o jsonpath='{.spec.ports[0].nodePort}' 2>/dev/null || echo "30801")
 if curl -f -s -m 5 "http://localhost:$PROD_API_PORT/health" >/dev/null 2>&1; then
     status_ok "prod API NodePort ($PROD_API_PORT) 정상"
 else

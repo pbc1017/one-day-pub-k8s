@@ -1,19 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kamf-root
+  name: one-day-pub-root
   namespace: argocd
   labels:
-    app.kubernetes.io/name: kamf-root
-    app.kubernetes.io/part-of: kamf
+    app.kubernetes.io/name: one-day-pub-root
+    app.kubernetes.io/part-of: one-day-pub
     component: root-application
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  project: kamf-project
+  project: one-day-pub-project
   
   source:
-    repoURL: https://github.com/pbc1017/KAMF-k8s.git
+    repoURL: https://github.com/pbc1017/one-day-pub-sub-k8s.git
     targetRevision: HEAD
     path: .argocd
   

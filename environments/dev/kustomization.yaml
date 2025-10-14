@@ -17,11 +17,11 @@ patches:
 - path: mysql-hostport-patch.yaml
 
 images:
-  - name: chansparcs/kamf-api
-    newName: chansparcs/kamf-api
+  - name: chansparcs/one-day-pub-api
+    newName: chansparcs/one-day-pub-api
     newTag: dev-8849af30ad793a7dc3c1052ae97fbdf396261ac1
-  - name: chansparcs/kamf-web
-    newName: chansparcs/kamf-web
+  - name: chansparcs/one-day-pub-web
+    newName: chansparcs/one-day-pub-web
     newTag: dev-8849af30ad793a7dc3c1052ae97fbdf396261ac1
 
-namespace: kamf-dev
+namespace: one-day-pub-dev

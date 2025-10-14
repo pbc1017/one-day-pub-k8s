@@ -1,4 +1,4 @@
-# KAMF K8s Deployment Scripts 📜
+# One Day Pub K8s Deployment Scripts 📜
 
 Phase 6 배포 자동화 스크립트 모음입니다. 실제 서버에 K3s + ArgoCD를 설치하고 Docker → K8s로 점진적으로 마이그레이션할 수 있습니다.
 
@@ -36,18 +36,18 @@ Phase 6 배포 자동화 스크립트 모음입니다. 실제 서버에 K3s + Ar
 ### **3단계: 운영환경 점진적 전환**
 ```bash
 # API 30% K8s 전환
-./migrate-nginx.sh kamf_prod_api 30801 30
+./migrate-nginx.sh one-day-pub_prod_api 30801 30
 
 # Web 30% K8s 전환
-./migrate-nginx.sh kamf_prod_web 30901 30
+./migrate-nginx.sh one-day-pub_prod_web 30901 30
 
 # 1-2일 모니터링 후 70% 전환
-./migrate-nginx.sh kamf_prod_api 30801 70
-./migrate-nginx.sh kamf_prod_web 30901 70
+./migrate-nginx.sh one-day-pub_prod_api 30801 70
+./migrate-nginx.sh one-day-pub_prod_web 30901 70
 
 # 최종 100% 전환
-./migrate-nginx.sh kamf_prod_api 30801 100
-./migrate-nginx.sh kamf_prod_web 30901 100
+./migrate-nginx.sh one-day-pub_prod_api 30801 100
+./migrate-nginx.sh one-day-pub_prod_web 30901 100
 ```
 
 ## 🛡️ 안전장치
@@ -88,7 +88,7 @@ Phase 6 배포 자동화 스크립트 모음입니다. 실제 서버에 K3s + Ar
 
 ### **서버 정보**
 - **IP**: 210.117.237.104
-- **사용자**: kamf (sudo 권한)
+- **사용자**: one-day-pub (sudo 권한)
 - **현재 포트**: 41121(SSH), 80(HTTP), 443(HTTPS)
 
 ### **필요한 추가 포트**
@@ -101,7 +101,7 @@ Phase 6 배포 자동화 스크립트 모음입니다. 실제 서버에 K3s + Ar
 ### **접속 방법**
 ```bash
 # sshpass를 사용한 접속
-sshpass -p 'PASSWORD' ssh -p 41121 kamf@210.117.237.104
+sshpass -p 'PASSWORD' ssh -p 41121 one-day-pub@210.117.237.104
 
 # 스크립트 실행
 cd k8s/scripts
@@ -142,8 +142,8 @@ ArgoCD UI:  localhost:30080 (http://210.117.237.104:30080)
 
 ### **nginx 업스트림 예시**
 ```nginx
-upstream kamf_prod_api {
-    server kamf-api:8000 weight=70;        # Docker 70%
+upstream one-day-pub_prod_api {
+    server one-day-pub-api:8000 weight=70;        # Docker 70%
     server 127.0.0.1:30801 weight=30;      # K8s 30%
 }
 ```
@@ -191,7 +191,7 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 #### **nginx 설정 오류**
 ```bash
 # 설정 검증
-docker exec kamf-nginx nginx -t
+docker exec one-day-pub-nginx nginx -t
 
 # 백업에서 복원
 ./rollback.sh nginx
@@ -203,7 +203,7 @@ docker exec kamf-nginx nginx -t
 kubectl get svc -A | grep NodePort
 
 # 파드 로그 확인
-kubectl logs -f deployment/kamf-api -n kamf-dev
+kubectl logs -f deployment/one-day-pub-api -n one-day-pub-dev
 ```
 
 ## 📚 참고 자료
@@ -211,7 +211,7 @@ kubectl logs -f deployment/kamf-api -n kamf-dev
 - [K3s 공식 문서](https://docs.k3s.io/)
 - [ArgoCD 공식 문서](https://argo-cd.readthedocs.io/)
 - [Traefik 설정 가이드](https://doc.traefik.io/traefik/)
-- [KAMF Phase 6 노션 페이지](https://www.notion.so/chan1017/Phase-6-267c0bd47b5d811b8715eaaa291756a7)
+- [One Day Pub Phase 6 노션 페이지](https://www.notion.so/chan1017/Phase-6-267c0bd47b5d811b8715eaaa291756a7)
 
 ---
 

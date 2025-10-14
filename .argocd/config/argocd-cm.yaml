@@ -10,15 +10,15 @@ metadata:
 data:
   # Git 리포지토리 설정
   repositories: |
-    - url: https://github.com/pbc1017/KAMF-k8s.git
+    - url: https://github.com/pbc1017/one-day-pub-sub-k8s.git
       type: git
-      name: kamf-k8s
+      name: one-day-pub-k8s
   
   # 애플리케이션 인스턴스 레이블 키
   application.instanceLabelKey: argocd.argoproj.io/instance
   
   # 서버 URL (ArgoCD UI 접근 URL)
-  url: https://argocd.kamf.site  # 향후 도메인 설정 시 사용
+  url: https://argocd.one-day-pub.site  # 향후 도메인 설정 시 사용
   
   # Git 커밋 상태 리포팅
   statusbadge.enabled: "true"
