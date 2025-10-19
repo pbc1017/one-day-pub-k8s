@@ -13,7 +13,7 @@ spec:
   project: one-day-pub-project
   
   source:
-    repoURL: https://github.com/pbc1017/one-day-pub-sub-k8s.git
+    repoURL: https://github.com/pbc1017/one-day-pub-k8s.git
     targetRevision: HEAD
     path: .argocd
   

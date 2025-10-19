@@ -34,34 +34,16 @@ echo "🔑 ArgoCD 초기 admin 비밀번호 확인..."
 ARGOCD_PASSWORD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
 echo "ArgoCD admin 비밀번호: $ARGOCD_PASSWORD"
 
-# ArgoCD Server를 NodePort로 노출 (Traefik IngressRoute 대신)
-echo "🌐 ArgoCD Server NodePort 서비스 생성..."
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Service
-metadata:
-  name: argocd-server-nodeport
-  namespace: argocd
-  labels:
-    app.kubernetes.io/component: server
-    app.kubernetes.io/name: argocd-server
-    app.kubernetes.io/part-of: argocd
-spec:
-  type: NodePort
-  ports:
-  - port: 80
-    protocol: TCP
-    targetPort: 8080
-    nodePort: 30080
-    name: server
-  - port: 443
-    protocol: TCP
-    targetPort: 8080
-    nodePort: 30443
-    name: server-https
-  selector:
-    app.kubernetes.io/name: argocd-server
-EOF
+# ArgoCD 서버 insecure 모드 설정 (nginx-ingress 사용)
+echo "🔓 ArgoCD 서버 insecure 모드 설정..."
+kubectl patch configmap argocd-cmd-params-cm -n argocd --patch '{"data":{"server.insecure":"true"}}'
+kubectl rollout restart deployment argocd-server -n argocd
+kubectl rollout status deployment argocd-server -n argocd --timeout=120s
+
+# ArgoCD Ingress 적용
+echo "🌐 ArgoCD Ingress 적용..."
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+kubectl apply -f "$SCRIPT_DIR/../.argocd/ingress/argocd-ingress.yaml"
 
 # ArgoCD CLI 설치
 echo "🔧 ArgoCD CLI 설치..."
@@ -74,12 +56,6 @@ else
     echo "✅ ArgoCD CLI 이미 설치되어 있음"
 fi
 
-# ArgoCD 서버 insecure 모드 설정 (HTTP 접근 허용)
-echo "🔓 ArgoCD 서버 insecure 모드 설정..."
-kubectl patch configmap argocd-cmd-params-cm -n argocd --patch '{"data":{"server.insecure":"true"}}'
-kubectl rollout restart deployment argocd-server -n argocd
-kubectl rollout status deployment argocd-server -n argocd --timeout=120s
-
 # 외부 IP 확인
 EXTERNAL_IP=$(curl -s ifconfig.me || echo "210.117.237.104")
 
@@ -87,15 +63,19 @@ echo ""
 echo "🎉 ArgoCD 설치 완료!"
 echo ""
 echo "📋 ArgoCD 접속 정보:"
-echo "- URL: http://$EXTERNAL_IP:30080"
+echo "- URL: https://argocd.one-day-pub.site"
 echo "- Username: admin"
 echo "- Password: $ARGOCD_PASSWORD"
 echo ""
+echo "⚠️  DNS 설정 확인:"
+echo "  argocd.one-day-pub.site → $EXTERNAL_IP"
+echo ""
 echo "🔗 다음 단계:"
-echo "  1. 웹 브라우저에서 ArgoCD UI 접속 확인"
-echo "  2. One Day Pub GitOps 레포 연결"
-echo "  3. ./connect-gitops.sh 실행 (별도 작성 필요)"
+echo "  1. DNS A 레코드 설정"
+echo "  2. ArgoCD UI 접속 확인"
+echo "  3. Root Application 배포 (자동)"
 echo ""
 echo "📝 참고 명령어:"
 echo "  kubectl get pods -n argocd          # ArgoCD 파드 상태"
+echo "  kubectl get ingress -n argocd       # Ingress 확인"
 echo "  kubectl logs -n argocd deployment/argocd-server  # 로그 확인"

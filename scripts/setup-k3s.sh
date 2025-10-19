@@ -7,8 +7,8 @@ set -e
 echo "🚀 K3s 클러스터 설치 시작..."
 
 # 현재 사용자 확인
-if [ "$USER" != "one-day-pub" ]; then
-    echo "⚠️  one-day-pub 사용자로 실행해주세요"
+if [ "$USER" != "kws" ]; then
+    echo "⚠️  kws 사용자로 실행해주세요"
     exit 1
 fi
 
@@ -30,9 +30,9 @@ sudo apt-get install -y \
 EXTERNAL_IP=$(curl -s ifconfig.me || curl -s ipinfo.io/ip || echo "210.117.237.104")
 echo "🌐 외부 IP: $EXTERNAL_IP"
 
-# K3s 설치 (Traefik 포함, ServiceLB만 비활성화)
-echo "☸️  K3s 설치 시작 (Traefik Ingress 포함)..."
-curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable=servicelb --node-external-ip=$EXTERNAL_IP --write-kubeconfig-mode=644" sh -
+# K3s 설치 (Traefik과 ServiceLB 비활성화, nginx-ingress 사용)
+echo "☸️  K3s 설치 시작 (Traefik 비활성화, nginx-ingress 사용)..."
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable=traefik --disable=servicelb --node-external-ip=$EXTERNAL_IP --write-kubeconfig-mode=644" sh -
 
 # K3s 서비스 상태 확인
 echo "✅ K3s 서비스 상태 확인..."
@@ -56,10 +56,6 @@ echo "📊 클러스터 상태 확인..."
 kubectl get nodes -o wide
 kubectl get pods -A
 
-# Traefik 상태 확인
-echo "🌐 Traefik Ingress Controller 확인..."
-kubectl get pods -n kube-system -l app.kubernetes.io/name=traefik
-
 # One Day Pub 네임스페이스 생성
 echo "📁 One Day Pub 네임스페이스 생성..."
 kubectl create namespace one-day-pub-dev --dry-run=client -o yaml | kubectl apply -f -
@@ -78,5 +74,6 @@ echo "- Kubeconfig: ~/.kube/config"
 echo "- 네임스페이스: one-day-pub-dev, one-day-pub-prod"
 echo ""
 echo "🔗 다음 단계:"
-echo "  ./install-argocd.sh     # ArgoCD 설치"
-echo "  kubectl get all -A      # 전체 리소스 확인"
+echo "  ./install-nginx-ingress.sh  # nginx-ingress-controller 설치"
+echo "  ./install-cert-manager.sh   # cert-manager 설치"
+echo "  kubectl get all -A          # 전체 리소스 확인"

@@ -11,8 +11,8 @@ spec:
   
   # 소스 레포지토리 제한
   sourceRepos:
-  - https://github.com/pbc1017/One Day Pub-k8s.git
-  - https://github.com/pbc1017/One Day Pub-k8s  # SSH 버전도 허용
+  - https://github.com/pbc1017/one-day-pub-k8s.git
+  - https://github.com/pbc1017/one-day-pub-k8s  # SSH 버전도 허용
   
   # 배포 대상 클러스터 및 네임스페이스 제한
   destinations:

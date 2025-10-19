@@ -13,7 +13,7 @@ spec:
   project: one-day-pub-project
   
   source:
-    repoURL: https://github.com/pbc1017/one-day-pub-sub-k8s.git
+    repoURL: https://github.com/pbc1017/one-day-pub-k8s.git
     targetRevision: HEAD
     path: environments/prod
   
@@ -22,10 +22,8 @@ spec:
     namespace: one-day-pub-prod
   
   syncPolicy:
-    # GitOps: PR 머지 후 자동 동기화 🚀  
-    automated:
-      prune: true     # 삭제된 리소스 자동 정리
-      selfHeal: false # 운영환경은 수동 변경사항 보존
+    # GitOps: 운영환경은 수동 동기화 (안전성 우선) 🛡️
+    automated: null
     syncOptions:
     - CreateNamespace=true
     - PrunePropagationPolicy=foreground
@@ -33,13 +31,13 @@ spec:
     - RespectIgnoreDifferences=true
     - ApplyOutOfSyncOnly=true
     retry:
-      limit: 3  # 운영환경은 재시도 횟수 제한
+      limit: 5
       backoff:
-        duration: 10s
+        duration: 5s
         factor: 2
-        maxDuration: 5m
+        maxDuration: 3m
   
-  revisionHistoryLimit: 20  # 운영환경은 더 많은 히스토리 보관
+  revisionHistoryLimit: 10
   
   # 리소스 상태 모니터링
   ignoreDifferences:
@@ -51,9 +49,3 @@ spec:
     kind: Service
     jsonPointers:
     - /spec/clusterIP
-  
-  # 운영환경 알림 설정
-  operation:
-    sync:
-      syncOptions:
-      - RespectIgnoreDifferences=true
