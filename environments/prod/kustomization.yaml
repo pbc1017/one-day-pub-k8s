@@ -2,25 +2,26 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-- ../../base/api
-- ../../base/web  
-- ../../base/mysql
-- namespace.yaml
-- nodeport-services.yaml
-- ingress-route.yaml
-# - secrets.yaml  # Removed: Secrets applied directly via SSH
+  - ../../base/api
+  - ../../base/web
+  - ../../base/mysql
+  - namespace.yaml
+  - ingress.yaml
+  - www-redirect-ingress.yaml
 
 patches:
-- path: api-patch.yaml
-- path: web-patch.yaml
-- path: mysql-patch.yaml
+  - path: api-patch.yaml
+  - path: api-dns-patch.yaml
+  - path: web-patch.yaml
+  - path: mysql-patch.yaml
+  - path: mysql-hostport-patch.yaml
 
 images:
-- name: chansparcs/one-day-pub-api
-  newName: chansparcs/one-day-pub-api
-  newTag: latest-409be15165d7c42690e8c9ff66247b94a4955432
-- name: chansparcs/one-day-pub-web  
-  newName: chansparcs/one-day-pub-web
-  newTag: latest-409be15165d7c42690e8c9ff66247b94a4955432
+  - name: chansparcs/one-day-pub-api
+    newName: chansparcs/one-day-pub-api
+    newTag: latest-409be15165d7c42690e8c9ff66247b94a4955432
+  - name: chansparcs/one-day-pub-web
+    newName: chansparcs/one-day-pub-web
+    newTag: latest-409be15165d7c42690e8c9ff66247b94a4955432
 
 namespace: one-day-pub-prod
