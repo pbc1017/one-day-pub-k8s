@@ -7,7 +7,7 @@ resources:
   - ../../base/mysql
   - namespace.yaml
   - ingress.yaml
-  - www-redirect-ingress.yaml
+  # - www-redirect-ingress.yaml  # Temporarily disabled due to nginx validation
 
 patches:
   - path: api-patch.yaml
