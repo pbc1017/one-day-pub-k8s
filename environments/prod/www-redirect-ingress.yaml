@@ -11,7 +11,8 @@ metadata:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
     cert-manager.io/cluster-issuer: letsencrypt-prod
-    nginx.ingress.kubernetes.io/permanent-redirect: https://one-day-pub.site$request_uri
+    nginx.ingress.kubernetes.io/server-snippet: |
+      return 301 https://one-day-pub.site$request_uri;
 spec:
   tls:
     - hosts:
