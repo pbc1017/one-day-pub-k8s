@@ -22,8 +22,10 @@ spec:
     namespace: one-day-pub-prod
   
   syncPolicy:
-    # GitOps: 운영환경은 수동 동기화 (안전성 우선) 🛡️
-    automated: null
+    # GitOps: PR 머지 시 자동 동기화 (selfHeal=false로 안전성 유지) 🛡️
+    automated:
+      prune: true
+      selfHeal: false
     syncOptions:
     - CreateNamespace=true
     - PrunePropagationPolicy=foreground
