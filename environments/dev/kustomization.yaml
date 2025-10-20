@@ -6,22 +6,21 @@ resources:
 - ../../base/web  
 - ../../base/mysql
 - namespace.yaml
-- ingress.yaml
+- nodeport-services.yaml
+- ingress-route.yaml
 # - secrets.yaml  # Removed: Secrets applied directly via SSH
 
 patches:
 - path: api-patch.yaml
-- path: api-dns-patch.yaml
 - path: web-patch.yaml
 - path: mysql-patch.yaml
-- path: mysql-hostport-patch.yaml
 
 images:
-  - name: chansparcs/one-day-pub-api
-    newName: chansparcs/one-day-pub-api
-    newTag: dev-8849af30ad793a7dc3c1052ae97fbdf396261ac1
-  - name: chansparcs/one-day-pub-web
-    newName: chansparcs/one-day-pub-web
-    newTag: dev-8849af30ad793a7dc3c1052ae97fbdf396261ac1
+- name: chansparcs/one-day-pub-api
+  newName: chansparcs/one-day-pub-api
+  newTag: dev-fd33d50eec4eccebe3afd970249c230a77e40de1
+- name: chansparcs/one-day-pub-web  
+  newName: chansparcs/one-day-pub-web
+  newTag: dev-fd33d50eec4eccebe3afd970249c230a77e40de1
 
 namespace: one-day-pub-dev
