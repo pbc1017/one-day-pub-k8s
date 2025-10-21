@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
 - ../../base/api
-- ../../base/web  
+- ../../base/web
 - ../../base/mysql
 - namespace.yaml
 - ingress.yaml
@@ -17,11 +17,11 @@ patches:
 - path: mysql-hostport-patch.yaml
 
 images:
-  - name: chansparcs/one-day-pub-api
-    newName: chansparcs/one-day-pub-api
-    newTag: dev-e26aaed1d3de7c92b164d6d85168f8242ee4375d
-  - name: chansparcs/one-day-pub-web
-    newName: chansparcs/one-day-pub-web
-    newTag: dev-e26aaed1d3de7c92b164d6d85168f8242ee4375d
+- name: chansparcs/one-day-pub-api
+  newName: chansparcs/one-day-pub-api
+  newTag: dev-4c44757f50a9e0c89201e453e947990a7c08cd52
+- name: chansparcs/one-day-pub-web
+  newName: chansparcs/one-day-pub-web
+  newTag: dev-4c44757f50a9e0c89201e453e947990a7c08cd52
 
 namespace: one-day-pub-dev
