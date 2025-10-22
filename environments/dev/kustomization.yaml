@@ -19,9 +19,9 @@ patches:
 images:
 - name: chansparcs/one-day-pub-api
   newName: chansparcs/one-day-pub-api
-  newTag: dev-fbb794191156885b640f4f0fd158066386535786
+  newTag: dev-b812070b94697df36e07f74f385f070f3a3db6fa
 - name: chansparcs/one-day-pub-web
   newName: chansparcs/one-day-pub-web
-  newTag: dev-fbb794191156885b640f4f0fd158066386535786
+  newTag: dev-b812070b94697df36e07f74f385f070f3a3db6fa
 
 namespace: one-day-pub-dev
